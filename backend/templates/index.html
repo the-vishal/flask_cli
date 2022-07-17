@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            // Connect to the Socket.IO server.
+            var socket = io();
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'Connection Established!'});
+            });
+
+            socket.on('my_response', function(msg, cb) {
+                $('#log').append('<br>' + $('<div/>').text('>>> ' + msg.data).html());
+                if (cb)
+                    cb();
+            });
+
+            $('form#stime').submit(function(event) {
+                socket.emit('my_event', {data: 'stime'});
+                socket.emit('stime', {data: ''});
+                return false;
+            });
+            socket.on('stime_response', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text(msg.data).html());
+            })
+
+
+
+
+            $('form#ctime').submit(function(event) {
+                socket.emit('my_event', {data: 'ctime'});
+                socket.emit('ctime', {data: ''});
+                return false;
+            });
+            socket.on('ctime_response', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text(msg.data).html());
+            })
+
+
+            $('form#clients').submit(function(event) {
+                socket.emit('my_event', {data: 'clients'});
+                socket.emit('clients', {data: ''});
+                return false;
+            });
+            socket.on('clients_response', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text(msg.data).html());
+            })
+        });
+    </script>
+</head>
+<body>
+    <h1>Flask - WebSocket Server</h1>
+    <h2>Controls : </h2>
+    <form id="stime" method="POST" action="#">
+        <input type="submit" value="Server timestamp">
+    </form>
+
+    <form id="ctime" method="POST" action="#">
+        <input type="submit" value="Connection Time">
+    </form>
+
+    <form id="clients" method="POST" action="#">
+        <input type="submit" value="Connection Time">
+    </form>
+    <h2>Console :</h2>
+    <div id="log"></div>
+</body>
+</html>
